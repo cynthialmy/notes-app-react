@@ -17,7 +17,10 @@ export default function App() {
 		localStorage.setItem("notes", JSON.stringify(notes));
 	}, [notes]);
 
-	function createNewNote(body = "# Type your markdown note's title here") {
+	function createNewNote(
+		event,
+		body = "# Type your markdown note's title here"
+	) {
 		const newNote = {
 			id: nanoid(),
 			body: body,
@@ -37,8 +40,16 @@ export default function App() {
 		const index = notes.findIndex((note) => note.id === currentNoteId);
 		if (index > 0) {
 			notes.splice(index, 1);
-			createNewNote(text);
+			createNewNote(event, text);
 		}
+	}
+
+	function deleteNote(event, noteId) {
+		event.stopPropagation();
+		// Your code here
+		setNotes((prevNotes) => {
+			return prevNotes.filter((note) => note.id !== noteId);
+		});
 	}
 
 	function findCurrentNote() {
@@ -62,6 +73,7 @@ export default function App() {
 						currentNote={findCurrentNote()}
 						setCurrentNoteId={setCurrentNoteId}
 						newNote={createNewNote}
+						deleteNote={deleteNote}
 					/>
 					{currentNoteId && notes.length > 0 && (
 						<Editor
