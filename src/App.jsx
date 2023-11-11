@@ -17,23 +17,28 @@ export default function App() {
 		localStorage.setItem("notes", JSON.stringify(notes));
 	}, [notes]);
 
-	function createNewNote() {
+	function createNewNote(body = "# Type your markdown note's title here") {
 		const newNote = {
 			id: nanoid(),
-			body: "# Type your markdown note's title here",
+			body: body,
 		};
 		setNotes((prevNotes) => [newNote, ...prevNotes]);
 		setCurrentNoteId(newNote.id);
 	}
 
 	function updateNote(text) {
-		setNotes((oldNotes) =>
-			oldNotes.map((oldNote) => {
+		setNotes((oldNotes) => {
+			return oldNotes.map((oldNote) => {
 				return oldNote.id === currentNoteId
 					? { ...oldNote, body: text }
 					: oldNote;
-			})
-		);
+			});
+		});
+		const index = notes.findIndex((note) => note.id === currentNoteId);
+		if (index > 0) {
+			notes.splice(index, 1);
+			createNewNote(text);
+		}
 	}
 
 	function findCurrentNote() {
